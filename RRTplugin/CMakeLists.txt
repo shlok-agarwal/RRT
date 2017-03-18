@@ -1,0 +1,11 @@
+cmake_minimum_required (VERSION 2.6)
+project (RRTplugin)
+find_package(OpenRAVE REQUIRED)
+find_package(Boost ${OpenRAVE_Boost_VERSION} EXACT)
+include_directories(${OpenRAVE_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+link_directories(${OpenRAVE_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
+add_library(RRTplugin SHARED RRTplugin.cpp)
+set_target_properties(RRTplugin PROPERTIES COMPILE_FLAGS "${OpenRAVE_CXX_FLAGS}" LINK_FLAGS "${OpenRAVE_LINK_FLAGS}")
+target_link_libraries(RRTplugin ${OpenRAVE_LIBRARIES})
+install(TARGETS RRTplugin DESTINATION .)
+
