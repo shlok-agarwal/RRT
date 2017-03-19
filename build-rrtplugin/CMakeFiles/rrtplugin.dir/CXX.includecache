@@ -23,6 +23,10 @@ openrave/plugin.h
 -
 boost/bind.hpp
 -
+string
+-
+RRTNode.h
+-
 
 /usr/local/include/openrave-0.9/openrave/collisionchecker.h
 

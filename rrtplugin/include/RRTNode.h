@@ -20,13 +20,26 @@ public:
 
     typedef std::vector<float> config;
     typedef std::vector<config> Tree;
-    Tree T;
-    Tree buildRRT(config startconfig);
+
+    int dimension;
+    config startConfig;
+    config goalConfig;
+
     RRTNode();
+    bool setConfig(config);
+
+    config getConfig(config);
+
     config sampleRandomConfig();
 
-
-
-
+};
+class NodeTree :public RRTNode
+{
+public:
 
 };
+
+
+
+
+

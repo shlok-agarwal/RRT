@@ -60,7 +60,11 @@ if __name__ == "__main__":
 
         ### YOUR CODE HERE ###
         RRTPlugin = RaveCreateModule(env,'RRTPlugin')
-        print RRTPlugin.SendCommand('Test')
+        RRTPlugin.SendCommand('SetConfigDimension'+' '+str(len(goalconfig)))
+        RRTPlugin.SendCommand('SetStartConfig'+' '+str(startconfig).translate(None, "[],"))
+        RRTPlugin.SendCommand('SetGoalConfig'+' '+str(goalconfig).translate(None, "[],"))
+
+
 
         ### END OF YOUR CODE ###
     waitrobot(robot)

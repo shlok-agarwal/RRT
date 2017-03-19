@@ -1,14 +1,25 @@
 #include <openrave/plugin.h>
 #include <boost/bind.hpp>
+#include <string>
+#include<RRTNode.h>
 
 using namespace OpenRAVE;
+using namespace std;
 
+RRTNode Node;
 class RRTPlugin : public ModuleBase
 {
 public:
     RRTPlugin(EnvironmentBasePtr penv, std::istream& ss) : ModuleBase(penv) {
         RegisterCommand("Test",boost::bind(&RRTPlugin::Test,this,_1,_2),
                         "This is a test command");
+        RegisterCommand("SetConfigDimension",boost::bind(&RRTPlugin::SetConfigDimension,this,_1,_2),
+                        "This command sets system configuration");
+        RegisterCommand("SetStartConfig",boost::bind(&RRTPlugin::SetStartConfig,this,_1,_2),
+                        "This command sets start config");
+        RegisterCommand("SetGoalConfig",boost::bind(&RRTPlugin::SetGoalConfig,this,_1,_2),
+                        "This command sets goal config");
+
     }
     virtual ~RRTPlugin() {}
     
@@ -18,6 +29,37 @@ public:
         sout << "Plugin Interface Working";
         return true;
     }
+
+    bool SetConfigDimension(std::ostream& sout, std::istream& sinput)
+    {
+
+        string filename;
+        sinput >> filename;
+        Node.dimension=atoi(filename.c_str());
+        return true;
+    }
+    bool SetStartConfig(std::ostream& sout, std::istream& sinput)
+    {
+        string filename;
+        getline(sinput,filename);
+
+        std::istringstream stm(filename) ;
+        float f ;
+        while( stm >> f )    Node.startConfig.push_back(f) ;
+        return true;
+    }
+    bool SetGoalConfig(std::ostream& sout, std::istream& sinput)
+    {
+        string filename;
+        getline(sinput,filename);
+
+        std::istringstream stm(filename) ;
+        float f ;
+        while( stm >> f )    Node.goalConfig.push_back(f) ;
+
+        return true;
+    }
+
 };
 // Write and call functions here
 
@@ -34,7 +76,7 @@ InterfaceBasePtr CreateInterfaceValidated(InterfaceType type, const std::string&
 // called to query available plugins
 void GetPluginAttributesValidated(PLUGININFO& info)
 {
-info.interfacenames[PT_Module].push_back("RRTPlugin");
+    info.interfacenames[PT_Module].push_back("RRTPlugin");
     
 }
 
