@@ -1,7 +1,7 @@
 # RRT
 
 Todo:
-1. Get the plugin python interface working
-2. Understand available code
-3. Check out this link for examples http://openrave.org/docs/latest_stable/coreapihtml/examples.html
-4. Check the available openrave plugins available
+1. Send remaining input from python file to c++ file
+2. Create class structure for NodeTree and RRTNode
+3. Implement all functions is above class structure especially distanceto and nearest node functions
+4. Get the RRT structures right. This is necessary to proceed further in the program.
