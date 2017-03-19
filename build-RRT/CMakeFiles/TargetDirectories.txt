@@ -1,3 +1,0 @@
-/home/shlok/RRT/build-RRT/CMakeFiles/edit_cache.dir
-/home/shlok/RRT/build-RRT/CMakeFiles/rebuild_cache.dir
-/home/shlok/RRT/build-RRT/CMakeFiles/RRT.dir

@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     ### INITIALIZE YOUR PLUGIN HERE ###
     RaveInitialize()
-    RaveLoadPlugin('build-RRTplugin/libRRTplugin.so')
+    RaveLoadPlugin('/home/shlok/RRT/build-rrtplugin/librrtplugin.so')
     ### END INITIALIZING YOUR PLUGIN ###
 
 
@@ -59,10 +59,8 @@ if __name__ == "__main__":
         goalconfig = [0.449,-0.201,-0.151,0,0,-0.11,0]
 
         ### YOUR CODE HERE ###
-        ###call your plugin to plan, draw, and execute a path from the current configuration of the left arm to the goalconfig
-        RRTModule = RaveCreateModule(env, 'RRTModule')
-        #env.AddModule(RRTModule1,args='')
-        print RRTModule.SendCommand('hello')
+        RRTPlugin = RaveCreateModule(env,'RRTPlugin')
+        print RRTPlugin.SendCommand('Test')
 
         ### END OF YOUR CODE ###
     waitrobot(robot)
