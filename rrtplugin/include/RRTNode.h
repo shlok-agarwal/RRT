@@ -1,5 +1,4 @@
-#ifndef RRT_NODE
-#define RRT_NODE
+#pragma once
 
 #include<iostream>
 #include <vector>
@@ -53,8 +52,3 @@ public:
 
 };
 
-
-
-
-
-#endif

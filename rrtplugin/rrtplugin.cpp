@@ -51,8 +51,8 @@ public:
         cout<<Node.getSelfID()<<endl;
         cout<<Node.getJoint(2)<<endl;
 
-        //NodeTree N;
-        //N.addNode(sample,1,1);
+        NodeTree N;
+        N.addNode(sample,1,1);
 
         return true;
     }
