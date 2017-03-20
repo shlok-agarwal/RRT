@@ -70,6 +70,19 @@ public:
         }
         return config;
     }
+    bool isCollision(vector<double> config)
+    {
+         robot->SetActiveDOFValues(config);
+         if(robot->CheckSelfCollision())
+         {
+             return true;
+         }
+         else if(env->CheckCollision(RobotBaseConstPtr(robot)))
+         {
+             return true;
+         }
+         else return false;
+    }
 
 
 };

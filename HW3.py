@@ -69,6 +69,7 @@ if __name__ == "__main__":
         #print str([int(robot.GetJointFromDOFIndex(x).IsCircular(0)) for x in robot.GetActiveDOFIndices()]).translate(None, "[],")
         #print robot.GetActiveDOFIndices()
         #print str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],")
+        
 
 
 

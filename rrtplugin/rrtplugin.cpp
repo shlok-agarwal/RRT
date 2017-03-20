@@ -104,6 +104,13 @@ public:
 
         sample.assign(7,0.05);
         cout<<N.nearestNeighbor(sample)<<endl;
+        std::vector<dReal> weights;
+        cout<<"weights"<<endl;
+        robot->GetActiveDOFWeights(weights);
+        for (uint var = 0; var < weights.size(); ++var) {
+            cout<<weights.at(var)<<endl;
+
+        }
 
 
 
