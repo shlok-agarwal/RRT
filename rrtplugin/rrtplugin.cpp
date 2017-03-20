@@ -53,10 +53,15 @@ public:
 
         NodeTree N;
         N.addNode(sample,1,1);
+        sample.assign(7,0.5);
+        N.addNode(sample,2,1);
+        sample.assign(7,0.9);
+        N.addNode(sample,3,2);
+        N.printNodetree();
 
         return true;
     }
-/*
+    /*
     bool SetConfigDimension(std::ostream& sout, std::istream& sinput)
     {
         string filename;

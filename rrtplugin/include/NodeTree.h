@@ -3,6 +3,7 @@
 #include<iostream>
 #include <vector>
 #include<RRTNode.h>
+using namespace std;
 
 class NodeTree
 {
@@ -18,6 +19,14 @@ public:
         // TODO - Not needed in code at the moment
         return false;
 
+    }
+    void printNodetree()
+    {
+        for (uint i = 0; i < Nodes.size(); ++i) {
+
+            cout<<Nodes.at(i).self_id<<"    ";
+            cout<<Nodes.at(i).parent_id<<endl;
+        }
     }
 
 };
