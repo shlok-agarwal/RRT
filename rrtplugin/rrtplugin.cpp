@@ -3,6 +3,7 @@
 #include <string>
 #include<RRTNode.h>
 #include<NodeTree.h>
+#include<RRT.h>
 
 
 using namespace OpenRAVE;
@@ -20,16 +21,8 @@ public:
 
         RegisterCommand("Test",boost::bind(&RRTPlugin::Test,this,_1,_2),
                         "This is a test command");
-        /*
-        RegisterCommand("SetConfigDimension",boost::bind(&RRTPlugin::SetConfigDimension,this,_1,_2),
-                        "This command sets system configuration");
-        RegisterCommand("SetStartConfig",boost::bind(&RRTPlugin::SetStartConfig,this,_1,_2),
-                        "This command sets start config");
-        RegisterCommand("SetGoalConfig",boost::bind(&RRTPlugin::SetGoalConfig,this,_1,_2),
-                        "This command sets goal config");
-        RegisterCommand("RunRRT",boost::bind(&RRTPlugin::RunRRT,this,_1,_2),
+        RegisterCommand("StartRRT",boost::bind(&RRTPlugin::StartRRT,this,_1,_2),
                         "This command runs the RRT algorithm");
-*/
         env = penv;
         env->GetRobots(n);
         robot=n.at(0); //selecting the first robot
@@ -61,35 +54,42 @@ public:
 
         return true;
     }
-    /*
-    bool SetConfigDimension(std::ostream& sout, std::istream& sinput)
-    {
-        string filename;
-        sinput >> filename;
-        Node.dimension=atoi(filename.c_str());
-        return true;
-    }
-    bool SetStartConfig(std::ostream& sout, std::istream& sinput)
+    bool StartRRT(std::ostream& sout, std::istream& sinput)
     {
         string filename;
         getline(sinput,filename);
 
         std::istringstream stm(filename) ;
-        float f ;
-        while( stm >> f )    Node.startConfig.push_back(f) ;
-        return true;
-    }
-    bool SetGoalConfig(std::ostream& sout, std::istream& sinput)
-    {
-        string filename;
-        getline(sinput,filename);
 
-        std::istringstream stm(filename) ;
-        float f ;
-        while( stm >> f )    Node.goalConfig.push_back(f) ;
+        std::vector<int> jindex;
+        jindex=robot->GetActiveDOFIndices();
+
+        std::vector<float> startConfig;
+        std::vector<float> goalConfig;
+
+        float f;
+        uint i=0;
+        while( stm >> f )
+        {
+
+            if(i<jindex.size())
+            {
+                startConfig.push_back(f) ;
+            }
+                else
+            {
+                goalConfig.push_back(f) ;
+            }
+            ++i;
+        }
+        RRT R(startConfig,goalConfig,env);
+
+
 
         return true;
+
     }
+ /*
     bool RunRRT(std::ostream& sout, std::istream& sinput)
     {
         // Calculate other essentials needed to run the program

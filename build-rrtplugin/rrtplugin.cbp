@@ -131,6 +131,9 @@
       <Unit filename="/home/shlok/RRT/rrtplugin/NodeTree.cpp">
          <Option target="rrtplugin"/>
       </Unit>
+      <Unit filename="/home/shlok/RRT/rrtplugin/RRT.cpp">
+         <Option target="rrtplugin"/>
+      </Unit>
       <Unit filename="/home/shlok/RRT/rrtplugin/RRTNode.cpp">
          <Option target="rrtplugin"/>
       </Unit>

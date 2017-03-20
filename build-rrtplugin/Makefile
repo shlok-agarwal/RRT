@@ -194,6 +194,33 @@ NodeTree.cpp.s:
 	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/NodeTree.cpp.s
 .PHONY : NodeTree.cpp.s
 
+RRT.o: RRT.cpp.o
+
+.PHONY : RRT.o
+
+# target to build an object file
+RRT.cpp.o:
+	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/RRT.cpp.o
+.PHONY : RRT.cpp.o
+
+RRT.i: RRT.cpp.i
+
+.PHONY : RRT.i
+
+# target to preprocess a source file
+RRT.cpp.i:
+	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/RRT.cpp.i
+.PHONY : RRT.cpp.i
+
+RRT.s: RRT.cpp.s
+
+.PHONY : RRT.s
+
+# target to generate assembly for a file
+RRT.cpp.s:
+	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/RRT.cpp.s
+.PHONY : RRT.cpp.s
+
 RRTNode.o: RRTNode.cpp.o
 
 .PHONY : RRTNode.o
@@ -264,6 +291,9 @@ help:
 	@echo "... NodeTree.o"
 	@echo "... NodeTree.i"
 	@echo "... NodeTree.s"
+	@echo "... RRT.o"
+	@echo "... RRT.i"
+	@echo "... RRT.s"
 	@echo "... RRTNode.o"
 	@echo "... RRTNode.i"
 	@echo "... RRTNode.s"

@@ -64,10 +64,11 @@ if __name__ == "__main__":
         #RRTPlugin.SendCommand('SetConfigDimension'+' '+str(len(goalconfig)))
         #RRTPlugin.SendCommand('SetStartConfig'+' '+str(startconfig).translate(None, "[],"))
         #RRTPlugin.SendCommand('SetGoalConfig'+' '+str(goalconfig).translate(None, "[],"))
-        #RRTPlugin.SendCommand('RunRRT')
+        RRTPlugin.SendCommand('StartRRT'+' '+str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],"))
 
         #print str([int(robot.GetJointFromDOFIndex(x).IsCircular(0)) for x in robot.GetActiveDOFIndices()]).translate(None, "[],")
         #print robot.GetActiveDOFIndices()
+        #print str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],")
 
 
 
