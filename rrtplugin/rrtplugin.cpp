@@ -34,6 +34,7 @@ public:
     {
 
         cout << "Plugin Interface Working"<<endl;
+        /*
         vector<float> sample;
         sample.assign(7,0.2);
         RRTNode Node(sample,1,1);
@@ -51,7 +52,7 @@ public:
         sample.assign(7,0.9);
         N.addNode(sample,3,2);
         N.printNodetree();
-
+        */
         return true;
     }
     bool StartRRT(std::ostream& sout, std::istream& sinput)
@@ -76,7 +77,7 @@ public:
             {
                 startConfig.push_back(f) ;
             }
-                else
+            else
             {
                 goalConfig.push_back(f) ;
             }
@@ -84,12 +85,35 @@ public:
         }
         RRT R(startConfig,goalConfig,env);
 
+        vector<float> sample;
+        sample.assign(7,0.2);
+
+        NodeTree N;
+        sample.assign(7,0.1);
+        N.addNode(sample,1,1);
+        sample.assign(7,0.2);
+        N.addNode(sample,2,1);
+        sample.assign(7,0.3);
+        N.addNode(sample,3,2);
+        sample.assign(7,0.4);
+        N.addNode(sample,4,3);
+        sample.assign(7,0.5);
+        N.addNode(sample,5,4);
+        N.printNodetree();
+
+
+        sample.assign(7,0.05);
+        cout<<N.nearestNeighbor(sample)<<endl;
+
+
+
+
 
 
         return true;
 
     }
- /*
+    /*
     bool RunRRT(std::ostream& sout, std::istream& sinput)
     {
         // Calculate other essentials needed to run the program

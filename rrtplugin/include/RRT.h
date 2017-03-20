@@ -19,6 +19,8 @@ public:
 
     std::vector<dReal> qmin, qmax;
     std::vector<int> jindex,jcircular;
+    std::uniform_real_distribution<double> random;
+    std::random_device rand_dev;
 
 
     RRT(vector<float> _startConfig, vector<float> _goalConfig, EnvironmentBasePtr _env)
@@ -50,9 +52,23 @@ public:
                 qmin.at(i)=-2*3.14; qmax.at(i)=2*3.14;
             }
         }
-        for (int i = 0; i < 7; ++i) {
-           cout<<qmin.at(i)<<"    "<<qmax.at(i)<<endl;
+        for (uint i = 0; i < jindex.size(); ++i) {
+            cout<<qmin.at(i)<<"     "<<qmax.at(i)<<endl;
         }
+    }
+    vector<float> sampleRandomConfig()
+    {
+        vector<float> config;
+        for (uint i = 0; i < jindex.size(); ++i) {
+            // First joint
+            random=std::uniform_real_distribution<double>(qmin.at(i),qmax.at(i));
+            std::mt19937_64 init_generator(rand_dev());
+            config.push_back(random(init_generator));
+        }
+        for (uint i = 0; i < jindex.size(); ++i) {
+            cout<<config.at(i)<<endl;
+        }
+        return config;
     }
 
 

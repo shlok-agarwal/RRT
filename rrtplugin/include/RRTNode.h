@@ -2,6 +2,7 @@
 
 #include<iostream>
 #include <vector>
+#include <math.h>
 
 class RRTNode
 {
@@ -48,6 +49,14 @@ public:
     int getParentID()
     {
         return parent_id;
+    }
+    float calcDistance(configv sample)
+    {
+        float dist=0;
+        for (uint i = 0; i < config.size(); ++i) {
+            dist+=pow(config.at(i)-sample.at(i),2);
+        }
+        return sqrt(dist);
     }
 
 };
