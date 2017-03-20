@@ -79,11 +79,11 @@ public:
         // Unqiue Joint ID for each joint
         jindex=robot->GetActiveDOFIndices();
         for (uint i = 0; i < jindex.size(); ++i) {
-           if(robot->GetJointFromDOFIndex(jindex.at(i))->IsCircular(0)==true)
-           {
-               jcircular.push_back(1);
-           }
-           else jcircular.push_back(0);
+            if(robot->GetJointFromDOFIndex(jindex.at(i))->IsCircular(0)==true)
+            {
+                jcircular.push_back(1);
+            }
+            else jcircular.push_back(0);
         }
 
         // Calculating joint limits for non-circular joints
@@ -95,6 +95,21 @@ public:
                 qmin.at(i)=-2*3.14; qmax.at(i)=2*3.14;
             }
         }
+
+        // 2. Generating random configuratin: TODO : Account for goal bias later
+        std::uniform_real_distribution<double> random;
+        random=std::uniform_real_distribution<double>(0.0,1.0);
+        std::random_device rand_dev;
+        std::mt19937_64 init_generator(rand_dev());
+        cout<<"random number "<<random(init_generator)<<endl;
+        cout<<"random number "<<random(init_generator)<<endl;
+
+
+
+
+
+
+
 
         return true;
 

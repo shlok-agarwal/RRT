@@ -17,25 +17,30 @@ public:
     {
 
     }; */
-
+    RRTNode();
     typedef std::vector<float> config;
     typedef std::vector<config> Tree;
+    int self_id;
+    int parent_id;
+
 
     int dimension;
     config startConfig;
     config goalConfig;
+    config getConfig(int self_id);
+    config getParent(int self_id);
 
-    RRTNode();
-    bool setConfig(config);
-
-    config getConfig(config);
-
-    config sampleRandomConfig();
-
+    config sampleRandomConfig(); // should implement in RunRRT
 };
 class NodeTree :public RRTNode
 {
 public:
+
+    bool addNode(int self_id, config);
+    bool deleteNode(int self_id);
+    bool getNode(int self_id);
+    Tree getPath(int self_id);
+    config nearestNode(config);
 
 };
 

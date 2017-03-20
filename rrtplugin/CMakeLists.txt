@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 2.6.0)
 project(rrtplugin)
 find_package(OpenRAVE 0.9 REQUIRED)
+set(CMAKE_CXX_FLAGS "-std=c++11")
 
 if( CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX )
   add_definitions("-fno-strict-aliasing -Wall")
