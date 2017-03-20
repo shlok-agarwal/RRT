@@ -6,8 +6,22 @@
 
 #IncludeRegexTransform: 
 
-/home/shlok/RRT/rrtplugin/RRT.cpp
+/home/shlok/RRT/rrtplugin/NodeTree.cpp
 iostream
+-
+NodeTree.h
+-
+
+/home/shlok/RRT/rrtplugin/RRTNode.cpp
+iostream
+-
+RRTNode.h
+-
+
+/home/shlok/RRT/rrtplugin/include/NodeTree.h
+iostream
+-
+vector
 -
 RRTNode.h
 -
@@ -26,6 +40,8 @@ boost/bind.hpp
 string
 -
 RRTNode.h
+-
+NodeTree.h
 -
 
 /usr/local/include/openrave-0.9/openrave/collisionchecker.h

@@ -167,32 +167,59 @@ rrtplugin/fast:
 	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/build
 .PHONY : rrtplugin/fast
 
-RRT.o: RRT.cpp.o
+NodeTree.o: NodeTree.cpp.o
 
-.PHONY : RRT.o
+.PHONY : NodeTree.o
 
 # target to build an object file
-RRT.cpp.o:
-	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/RRT.cpp.o
-.PHONY : RRT.cpp.o
+NodeTree.cpp.o:
+	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/NodeTree.cpp.o
+.PHONY : NodeTree.cpp.o
 
-RRT.i: RRT.cpp.i
+NodeTree.i: NodeTree.cpp.i
 
-.PHONY : RRT.i
+.PHONY : NodeTree.i
 
 # target to preprocess a source file
-RRT.cpp.i:
-	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/RRT.cpp.i
-.PHONY : RRT.cpp.i
+NodeTree.cpp.i:
+	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/NodeTree.cpp.i
+.PHONY : NodeTree.cpp.i
 
-RRT.s: RRT.cpp.s
+NodeTree.s: NodeTree.cpp.s
 
-.PHONY : RRT.s
+.PHONY : NodeTree.s
 
 # target to generate assembly for a file
-RRT.cpp.s:
-	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/RRT.cpp.s
-.PHONY : RRT.cpp.s
+NodeTree.cpp.s:
+	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/NodeTree.cpp.s
+.PHONY : NodeTree.cpp.s
+
+RRTNode.o: RRTNode.cpp.o
+
+.PHONY : RRTNode.o
+
+# target to build an object file
+RRTNode.cpp.o:
+	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/RRTNode.cpp.o
+.PHONY : RRTNode.cpp.o
+
+RRTNode.i: RRTNode.cpp.i
+
+.PHONY : RRTNode.i
+
+# target to preprocess a source file
+RRTNode.cpp.i:
+	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/RRTNode.cpp.i
+.PHONY : RRTNode.cpp.i
+
+RRTNode.s: RRTNode.cpp.s
+
+.PHONY : RRTNode.s
+
+# target to generate assembly for a file
+RRTNode.cpp.s:
+	$(MAKE) -f CMakeFiles/rrtplugin.dir/build.make CMakeFiles/rrtplugin.dir/RRTNode.cpp.s
+.PHONY : RRTNode.cpp.s
 
 rrtplugin.o: rrtplugin.cpp.o
 
@@ -234,9 +261,12 @@ help:
 	@echo "... install/local"
 	@echo "... install/strip"
 	@echo "... rrtplugin"
-	@echo "... RRT.o"
-	@echo "... RRT.i"
-	@echo "... RRT.s"
+	@echo "... NodeTree.o"
+	@echo "... NodeTree.i"
+	@echo "... NodeTree.s"
+	@echo "... RRTNode.o"
+	@echo "... RRTNode.i"
+	@echo "... RRTNode.s"
 	@echo "... rrtplugin.o"
 	@echo "... rrtplugin.i"
 	@echo "... rrtplugin.s"

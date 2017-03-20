@@ -1,50 +1,60 @@
+#ifndef RRT_NODE
+#define RRT_NODE
+
 #include<iostream>
 #include <vector>
 
 class RRTNode
 {
 public:
-    /*
-    std::vector<float> config;
-    void storeconfig(std::vector<float> _config); // Function should store configuration in a 2D vector array
-    //std::vector<> getparent(std::vector<float> _config); // Function should return parent for particular parent. Return -1 for non matching config file
-    void storeNode(Node _node);
-    bool addNode(Node _node);
-    bool deleteNode(Node _node);
-    Node getNode(int _index);
-    std::vector<Node> getPath(int _index);
-    struct Node
-    {
 
-    }; */
-    RRTNode();
-    typedef std::vector<float> config;
-    typedef std::vector<config> Tree;
+    typedef std::vector<float> configv;
+    typedef std::vector<configv> Tree;
+    configv config;
     int self_id;
     int parent_id;
-
-
     int dimension;
-    config startConfig;
-    config goalConfig;
-    config getConfig(int self_id);
-    config getParent(int self_id);
 
-    config sampleRandomConfig(); // should implement in RunRRT
+    RRTNode(configv _config, int _self_id, int _parent_id)
+    {
+        config=_config;
+        self_id=_self_id;
+        parent_id=_parent_id;
+
+    }
+    void setConfig(configv _config)
+    {
+        _config=_config;
+    }
+    configv getconfig()
+    {
+        return config;
+    }
+    double getJoint(int jindex)
+    {
+        return config[jindex];
+    }
+    void setSelfID(int _self_id)
+    {
+        self_id=_self_id;
+    }
+    void setParentID(int _parent_id)
+    {
+        parent_id=_parent_id;
+    }
+    int getSelfID()
+    {
+        return self_id;
+    }
+    int getParentID()
+    {
+        return parent_id;
+    }
+
 };
-class NodeTree :public RRTNode
-{
-public:
-
-    bool addNode(int self_id, config);
-    bool deleteNode(int self_id);
-    bool getNode(int self_id);
-    Tree getPath(int self_id);
-    config nearestNode(config);
-
-};
 
 
 
 
 
+#endif

@@ -60,13 +60,14 @@ if __name__ == "__main__":
 
         ### YOUR CODE HERE ###
         RRTPlugin = RaveCreateModule(env,'RRTPlugin')
-        RRTPlugin.SendCommand('SetConfigDimension'+' '+str(len(goalconfig)))
-        RRTPlugin.SendCommand('SetStartConfig'+' '+str(startconfig).translate(None, "[],"))
-        RRTPlugin.SendCommand('SetGoalConfig'+' '+str(goalconfig).translate(None, "[],"))
-        RRTPlugin.SendCommand('RunRRT')
+        RRTPlugin.SendCommand('Test')
+        #RRTPlugin.SendCommand('SetConfigDimension'+' '+str(len(goalconfig)))
+        #RRTPlugin.SendCommand('SetStartConfig'+' '+str(startconfig).translate(None, "[],"))
+        #RRTPlugin.SendCommand('SetGoalConfig'+' '+str(goalconfig).translate(None, "[],"))
+        #RRTPlugin.SendCommand('RunRRT')
 
         #print str([int(robot.GetJointFromDOFIndex(x).IsCircular(0)) for x in robot.GetActiveDOFIndices()]).translate(None, "[],")
-        print robot.GetActiveDOFIndices()
+        #print robot.GetActiveDOFIndices()
 
 
 

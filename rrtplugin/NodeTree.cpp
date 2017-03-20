@@ -1,5 +1,5 @@
 #include <iostream>
-#include<RRTNode.h>
+#include<NodeTree.h>
 
 using namespace std;
 

@@ -2,11 +2,12 @@
 #include <boost/bind.hpp>
 #include <string>
 #include<RRTNode.h>
+#include<NodeTree.h>
+
 
 using namespace OpenRAVE;
 using namespace std;
 
-RRTNode Node;
 class RRTPlugin : public ModuleBase
 {
 public:
@@ -19,6 +20,7 @@ public:
 
         RegisterCommand("Test",boost::bind(&RRTPlugin::Test,this,_1,_2),
                         "This is a test command");
+        /*
         RegisterCommand("SetConfigDimension",boost::bind(&RRTPlugin::SetConfigDimension,this,_1,_2),
                         "This command sets system configuration");
         RegisterCommand("SetStartConfig",boost::bind(&RRTPlugin::SetStartConfig,this,_1,_2),
@@ -27,7 +29,7 @@ public:
                         "This command sets goal config");
         RegisterCommand("RunRRT",boost::bind(&RRTPlugin::RunRRT,this,_1,_2),
                         "This command runs the RRT algorithm");
-
+*/
         env = penv;
         env->GetRobots(n);
         robot=n.at(0); //selecting the first robot
@@ -38,10 +40,23 @@ public:
     bool Test(std::ostream& sout, std::istream& sinput)
     {
 
-        sout << "Plugin Interface Working";
+        cout << "Plugin Interface Working"<<endl;
+        vector<float> sample;
+        sample.assign(7,0.2);
+        RRTNode Node(sample,1,1);
+        Node.setParentID(2);
+        Node.setSelfID(4);
+
+        cout<<Node.getParentID()<<endl;
+        cout<<Node.getSelfID()<<endl;
+        cout<<Node.getJoint(2)<<endl;
+
+        //NodeTree N;
+        //N.addNode(sample,1,1);
+
         return true;
     }
-
+/*
     bool SetConfigDimension(std::ostream& sout, std::istream& sinput)
     {
         string filename;
@@ -102,19 +117,12 @@ public:
         std::random_device rand_dev;
         std::mt19937_64 init_generator(rand_dev());
         cout<<"random number "<<random(init_generator)<<endl;
-        cout<<"random number "<<random(init_generator)<<endl;
-
-
-
-
-
-
-
+        cout<<"random number "<<random(init_generator)<<endl
 
         return true;
 
     }
-
+*/
 };
 // Write and call functions here
 
