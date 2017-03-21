@@ -92,9 +92,14 @@ public:
         Nodes.addNode(startConfig,1,0);
         Nodes.printNodetree();
         int state=0;
+        pair<int,NodeTree> p;
+        p.second=Nodes;
         for (long i = 0; i < maxiterations; ++i) {
             config=sampleRandomConfig();
-            state=extend(Nodes,config); // maybe change this to pointer
+            p=extend(p.second,config);
+            state=p.first; // maybe change this to pointer
+            cout<<"state:   "<<state<<endl;
+            Nodes=p.second;
             cout<<"iteration"<<endl;
             if(state==1)
             {
@@ -109,7 +114,7 @@ public:
         }
         else return false;
     }
-    int extend(NodeTree Nodes,vector<double> configrand)
+    pair<int,NodeTree> extend(NodeTree Nodes,vector<double> configrand)
     {
 
         cout<<"extend entered"<<endl;
@@ -132,10 +137,14 @@ public:
         uvector=int(sqrt(uvector));
         for (uint i = 0; i < configvector.size(); ++i) {
             configvector[i]=configvector[i]/uvector;
+           // cout<<"config vector at :"<<i<<"  = "<<configvector[i]<<"   "<<confignear[i]<<"   "<<configrand[i]<<endl;
 
         }
         // uvector - number of steps
         // configvector - step increments
+
+        cout<<"closest id   "<<tempID<<endl;
+
 
         for (int i = 0; i < uvector; ++i) {
 
@@ -148,25 +157,26 @@ public:
             if(k==goalConfig.size())
             {
                 cout<<"Goal Reached"<<endl;
-                return 1;
+                return make_pair(1,Nodes);
 
             }
             else if(isCollision(confignew))
             {
                 cout<<"collision"<<endl;
-                return 0;
+                return make_pair(0,Nodes);
             }
             else
             {
-                Nodes.addNode(confignew,Nodes.getNodeSize(),tempID);
+                Nodes.addNode(confignew,Nodes.getNodeSize()+1,tempID);
                 //cout<<"\r"<<"Added node: "<<confignew.at(0)<<"\t"<<confignew.at(1)<<"\t"<<confignew.at(2)<<"\t"<<confignew.at(3)<<"\t"<<confignew.at(4)<<"\t"<<confignew.at(5)<<"\t"<<confignew.at(6)<<"\t"<<Nodes.getNodeSize()<<flush;
                 cout<<"Added node: "<<confignew.at(0)<<"\t"<<confignew.at(1)<<"\t"<<confignew.at(2)<<"\t"<<confignew.at(3)<<"\t"<<confignew.at(4)<<"\t"<<confignew.at(5)<<"\t"<<confignew.at(6)<<"\t"<<Nodes.getNodeSize()<<endl;
                 Nodes.printNodetree();
                 tempID=Nodes.getNodeSize();
+                confignear=confignew;
             }
 
         }
-        return 0;
+        return make_pair(0,Nodes);
 
     }
 

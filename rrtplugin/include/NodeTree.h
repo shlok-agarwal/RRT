@@ -9,12 +9,14 @@ using namespace std;
 class NodeTree
 {
 public:
+    std::vector<RRTNode> Nodes;
 
     NodeTree()
     {
+        Nodes={};
         cout<<"object created"<<endl;
     }
-    std::vector<RRTNode> Nodes;
+
     void addNode(std::vector<double> _config,long _self_id,long _parent_id)
     {
 
