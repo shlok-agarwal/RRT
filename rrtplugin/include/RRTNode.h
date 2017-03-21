@@ -4,23 +4,26 @@
 #include <vector>
 #include <math.h>
 
+using namespace std;
+
 class RRTNode
 {
 public:
 
-    typedef std::vector<float> configv;
+    typedef std::vector<double> configv;
     typedef std::vector<configv> Tree;
     configv config;
     configv weights;
-    int self_id;
-    int parent_id;
-    int dimension;
+    long self_id;
+    long parent_id;
+    long dimension;
 
-    RRTNode(configv _config, int _self_id, int _parent_id, configv weights={3.17104, 2.75674, 2.2325,1.78948,1.42903,0.809013,0.593084})
+    RRTNode(configv _config, int _self_id, int _parent_id)
     {
         config=_config;
         self_id=_self_id;
         parent_id=_parent_id;
+        weights={3.17104, 2.75674, 2.2325,1.78948,1.42903,0.809013,0.593084};
 
     }
     // hard coded weight values because of discrepancy of results obtained c++ and python API of openrave
@@ -52,9 +55,9 @@ public:
     {
         return parent_id;
     }
-    float calcDistance(configv sample)
+    double calcDistance(configv sample)
     {
-        float dist=0;
+        double dist=0;
         for (uint i = 0; i < config.size(); ++i) {
             dist+=weights.at(i)*pow(config.at(i)-sample.at(i),2);
         }

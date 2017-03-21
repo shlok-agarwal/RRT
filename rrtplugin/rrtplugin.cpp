@@ -35,7 +35,7 @@ public:
 
         cout << "Plugin Interface Working"<<endl;
         /*
-        vector<float> sample;
+        vector<double> sample;
         sample.assign(7,0.2);
         RRTNode Node(sample,1,1);
         Node.setParentID(2);
@@ -65,10 +65,10 @@ public:
         std::vector<int> jindex;
         jindex=robot->GetActiveDOFIndices();
 
-        std::vector<float> startConfig;
-        std::vector<float> goalConfig;
+        std::vector<double> startConfig;
+        std::vector<double> goalConfig;
 
-        float f;
+        double f;
         uint i=0;
         while( stm >> f )
         {
@@ -83,9 +83,12 @@ public:
             }
             ++i;
         }
+
         RRT R(startConfig,goalConfig,env);
 
-        vector<float> sample;
+
+/*
+        vector<double> sample;
         sample.assign(7,0.2);
 
         NodeTree N;
@@ -102,21 +105,13 @@ public:
         N.printNodetree();
 
 
-        sample.assign(7,0.05);
-        cout<<N.nearestNeighbor(sample)<<endl;
-        std::vector<dReal> weights;
-        cout<<"weights"<<endl;
-        robot->GetActiveDOFWeights(weights);
-        for (uint var = 0; var < weights.size(); ++var) {
-            cout<<weights.at(var)<<endl;
+        sample.assign(7,2.0);
+        cout<<N.nearestNeighbor(sample).first<<endl;
+        cout<<N.getNodeSize()<<endl;
 
-        }
-
-
-
-
-
-
+*/
+        NodeTree N;
+        R.buildRRT(N);
         return true;
 
     }
