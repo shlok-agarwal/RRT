@@ -16,21 +16,26 @@ bool RRT::buildRRT(NodeTree &NTree)
         config.clear();
         sampleRandomConfig(config);
         state=extend(NTree,config);
-        if(state==1)
+        if(state)
         {
             break;
         }
     }
-    if(state==1)
+    if(state)
     {
         auto end = get_time::now();
         auto diff = end - start;
-        cout<<"Success!!    Time Elapsed:   "<<chrono::duration_cast<ns>(diff).count()<<" seconds"<<endl;
+        cout<<"Success!!    Time taken to find Goal:   "<<chrono::duration_cast<ns>(diff).count()<<" seconds"<<endl;
+        cout<<"Number of Nodes explored:    "<<NTree.getNodeSize()<<endl;
         vector <vector<double>> trajConfig;
         findPath(NTree,trajConfig);
-        cout<<"size before smoothening trajectory   "<<trajConfig.size()<<endl;
+        cout<<"Length of Path:  "<<trajConfig.size()<<endl;
+        start = get_time::now();
         smoothPath(trajConfig);
-        cout<<"size after smoothening trajectory    "<<trajConfig.size()<<endl;
+        end = get_time::now();
+        diff = end - start;
+        cout<<"Length of Path after Smoothening:    "<<trajConfig.size()<<endl;
+        cout<<"Time taken to smoothen the trajectory:   "<<chrono::duration_cast<ns>(diff).count()<<" seconds"<<endl;
         executeTraj(trajConfig);
         return true;
     }
