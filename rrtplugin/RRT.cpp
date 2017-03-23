@@ -62,7 +62,7 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
 
 */
 
-  //  cout<<"closest id   "<<tempID<<endl;
+    //  cout<<"closest id   "<<tempID<<endl;
 
     float parameter=0.0;
     long tempstop=0;
@@ -80,7 +80,7 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
         if(tempstop>200)
         {
             // This step is a hack to not get stuck in a branch for too long
-          //  cout<<"interrupt"<<endl;
+            //  cout<<"interrupt"<<endl;
             // Once called, it would go back to buildRRT function to get another random configuration
             return 0;
         }
@@ -90,7 +90,7 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
             uvector+=pow(configRand[i]-configNear[i],2);
         }
 
-       //   cout<<"euclidean:   "<<uvector<<endl;
+        //   cout<<"euclidean:   "<<uvector<<endl;
 
         if(uvector<0.01)
         {
@@ -107,7 +107,7 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
                     return 1;
                 }
             }
-       //      cout<<"     local goal reached"<<endl;
+            //      cout<<"     local goal reached"<<endl;
             return 0;
         }
 
@@ -139,7 +139,7 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
         }
         else if(isCollision(configNew))
         {
-           // cout<<"collision"<<endl;
+            // cout<<"collision"<<endl;
             return 0;
         }
         else
@@ -187,38 +187,54 @@ void RRT::executeTraj(NodeTree &NTree,vector<vector<double>> &trajConfig)
             cout<<"config "<<i<<"    "<<trajConfig.at(i)[j]<<endl;
         }
     }*/
-    cout<<"start planning \n";
+    //cout<<"start planning \n";
     // Creating trajectory : used from openrave example
     TrajectoryBasePtr traj = RaveCreateTrajectory(env,"");
     traj->Init(robot->GetActiveConfigurationSpecification());
     for (size_t i = 0; i < trajConfig.size(); ++i) {
         traj->Insert(i,trajConfig.at(trajConfig.size()-1-i),true);
     }
-    cout<<"inserted points \n";
+    //cout<<"inserted points \n";
     //    planningutils::ReverseTrajectory(traj);
     planningutils::RetimeActiveDOFTrajectory(traj,robot);
-    //smoothPath(trajConfig);
+    cout<<"size before smoothening trajectory   "<<trajConfig.size()<<endl;
+    smoothPath(trajConfig);
+    cout<<"size after smoothening trajectory    "<<trajConfig.size()<<endl;
 
     robot->GetController()->SetPath(traj);
-    cout<<"trajectory done \n";
+    cout<<"Trajectory Succesfully Executed !!! \n";
 }
 void RRT::smoothPath(vector<vector<double>> &trajConfig)
 {
     random=std::uniform_real_distribution<double>(0.0,trajConfig.size());
     std::mt19937_64 init_generator(rand_dev());
-    int r1=int(random(init_generator));
-    int r2=int(random(init_generator));
+    int r1,r2;
 
     for (int i = 0; i < 200; ++i) {
-        r1=int(random(init_generator));
-        r2=int(random(init_generator));
+        r1=int(random(init_generator))%trajConfig.size();
+        r2=int(random(init_generator))%trajConfig.size();
         if(r1!=r2)
         {
-            if(connectPath(trajConfig,r1,r2))
+            if(r1<r2)
             {
-                if(r1<r2) trajConfig.erase(trajConfig.begin()+r1+1,trajConfig.begin()+r2);
-                        else trajConfig.erase(trajConfig.begin()+r2+1,trajConfig.begin()+r1);
+                if(connectPath(trajConfig,r1,r2))
+                {
+
+                    trajConfig.erase(trajConfig.begin()+r1+1,trajConfig.begin()+r2);
+
+                }
             }
+            else
+            {
+                if(connectPath(trajConfig,r2,r1))
+                {
+
+                    trajConfig.erase(trajConfig.begin()+r2+1,trajConfig.begin()+r1);
+
+                }
+            }
+
+
         }
     }
 
@@ -226,64 +242,66 @@ void RRT::smoothPath(vector<vector<double>> &trajConfig)
 }
 bool RRT::connectPath(vector<vector<double>> &trajConfig,int r1,int r2)
 {
-    // calculate step size
 
+    vector<double> configStart,configGoal;
+    double uvector=0.0;
+    float parameter=0.0;
+    long tempstop=0;
+    double element;
     vector<double> configNew;
-    vector<double> configStart;
-    vector<double> configGoal;
-
     configStart=trajConfig.at(r1);
     configGoal=trajConfig.at(r2);
-    float uvector=0.0;
 
-    float parameter=0.0,element=0.0;
-    bool goalReached=true;
-    while(1)
+    while (true)
     {
-        for (size_t j = 0; j < configStart.size(); ++j) {
-            uvector=0.0;
-            vector<double> configNew;
-            bool goalReached = true;
-            for (uint i = 0; i < configStart.size(); ++i) {
-                uvector+=pow(configGoal[i]-configStart[i],2);
-            }
-            if(uvector<0.001)
-            {
-                // delete points between the two
-                return 1;
-            }
-            if(uvector)
+        configNew.clear();
+        tempstop++;
 
-                if(uvector<0.30)
-                {
-                    parameter=uvector;
-                }
-                else parameter=0.30;
+        if(tempstop>200)
+        {
+            //cout<<"too many iterations"<<endl;
+            return false;
+        }
+
+        uvector=0.0;
+        for (uint i = 0; i < configGoal.size(); ++i) {
+            uvector+=pow(configGoal[i]-configStart[i],2);
+        }
+
+        //   cout<<"euclidean:   "<<uvector<<endl;
+
+        if(uvector<0.01)
+        {
+            // This is to ensure that we stop moving further when we are tooooo close to the goal point
+            return true;
+        }
+
+        for (size_t j = 0; j < configGoal.size(); ++j) {
+
+
+            if(uvector<0.20)
+            {
+                parameter=uvector;
+            }
+            else parameter=0.20;
+
             element=configStart[j]+parameter*((configGoal[j]-configStart[j])/uvector);
             configNew.push_back(element);
             element=roundf(element*100.0)/100.0;
-
-            if(element!=configGoal[j]) {
-                goalReached=false;
-            }
-
         }
         //confignew
 
-        if(goalReached)
-        {
-            // delete points between the two
-            return 1;
-
-        }
-        else if(isCollision(configNew))
+        if(isCollision(configNew))
         {
             // cout<<"collision"<<endl;
-            return 0;
+            return false;
         }
+        else
+        {
+            configStart=configNew;
+        }
+
+
     }
 
-
-
 }
-
