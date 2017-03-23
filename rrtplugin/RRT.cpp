@@ -16,24 +16,22 @@ bool RRT::buildRRT(NodeTree &NTree)
         config.clear();
         sampleRandomConfig(config);
         state=extend(NTree,config);
-
-        //  cout<<"state:   "<<state<<endl;
-
-        //   cout<<"iteration"<<endl;
         if(state==1)
         {
             break;
         }
-
     }
     if(state==1)
     {
         auto end = get_time::now();
         auto diff = end - start;
         cout<<"Success!!    Time Elapsed:   "<<chrono::duration_cast<ns>(diff).count()<<" seconds"<<endl;
-        //NTree.printNodetree();
-        vector <vector<double>> trajconfig;
-        executeTraj(NTree,trajconfig);
+        vector <vector<double>> trajConfig;
+        findPath(NTree,trajConfig);
+        cout<<"size before smoothening trajectory   "<<trajConfig.size()<<endl;
+        smoothPath(trajConfig);
+        cout<<"size after smoothening trajectory    "<<trajConfig.size()<<endl;
+        executeTraj(trajConfig);
         return true;
     }
     else
@@ -103,7 +101,7 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
                 }
                 if(goalReached)
                 {
-                    cout<<"Goal Reached"<<endl;
+                    cout<<endl<<"Goal Reached"<<endl;
                     return 1;
                 }
             }
@@ -133,7 +131,7 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
 
         if(goalReached)
         {
-            cout<<"Goal Reached"<<endl;
+            cout<<endl<<"Goal Reached"<<endl;
             return 1;
 
         }
@@ -157,19 +155,30 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
     return 0;
 
 }
-void RRT::executeTraj(NodeTree &NTree,vector<vector<double>> &trajConfig)
+void RRT::executeTraj(vector<vector<double>> &trajConfig)
+{
+      TrajectoryBasePtr traj = RaveCreateTrajectory(env,"");
+    traj->Init(robot->GetActiveConfigurationSpecification());
+    for (size_t i = 0; i < trajConfig.size(); ++i) {
+        traj->Insert(i,trajConfig.at(trajConfig.size()-1-i),true);
+    }
+    planningutils::RetimeActiveDOFTrajectory(traj,robot);
+    robot->GetController()->SetPath(traj);
+    cout<<"Trajectory Succesfully Executed !!! \n";
+}
+void RRT::findPath(NodeTree &NTree,vector<vector<double>> &trajConfig)
 {
     long ID=0;
     // push the goal id first
     trajConfig.push_back(NTree.vecNodes.at(NTree.getNodeSize()-1)->config);
 
     ID=NTree.vecNodes.at(NTree.getNodeSize()-1)->parent_id;
-    //cout<<"goal id:"<<ID<<endl;
+
 
     // find parent by id and push it
     while(ID!=0)
     {
-        // cout<<"node size"<<NTree.getNodeSize()<< "\n";
+
         for (int i = 0; i < NTree.getNodeSize(); ++i) {
 
             if(NTree.vecNodes.at(i)->self_id==ID)
@@ -181,28 +190,6 @@ void RRT::executeTraj(NodeTree &NTree,vector<vector<double>> &trajConfig)
             }
         }
     }
-    //std::cout<<"Traj Config size:"<<trajConfig.size()<<std::endl;
-    /*  for (size_t i = 0; i < trajConfig.size(); ++i) {
-        for (int j = 0; j < 7; ++j) {
-            cout<<"config "<<i<<"    "<<trajConfig.at(i)[j]<<endl;
-        }
-    }*/
-    //cout<<"start planning \n";
-    // Creating trajectory : used from openrave example
-    TrajectoryBasePtr traj = RaveCreateTrajectory(env,"");
-    traj->Init(robot->GetActiveConfigurationSpecification());
-    for (size_t i = 0; i < trajConfig.size(); ++i) {
-        traj->Insert(i,trajConfig.at(trajConfig.size()-1-i),true);
-    }
-    //cout<<"inserted points \n";
-    //    planningutils::ReverseTrajectory(traj);
-    planningutils::RetimeActiveDOFTrajectory(traj,robot);
-    cout<<"size before smoothening trajectory   "<<trajConfig.size()<<endl;
-    smoothPath(trajConfig);
-    cout<<"size after smoothening trajectory    "<<trajConfig.size()<<endl;
-
-    robot->GetController()->SetPath(traj);
-    cout<<"Trajectory Succesfully Executed !!! \n";
 }
 void RRT::smoothPath(vector<vector<double>> &trajConfig)
 {

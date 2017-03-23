@@ -138,7 +138,8 @@ public:
     }
     bool buildRRT(NodeTree &NTree);
     short extend(NodeTree &NTree, const vector<double> configRand);
-    void executeTraj(NodeTree &NTree,vector<vector<double>> &trajConfig);
+    void executeTraj(vector<vector<double>> &trajConfig);
+    void findPath(NodeTree &NTree,vector<vector<double>> &trajConfig);
     void smoothPath(vector<vector<double>> &trajConfig);
     bool connectPath(vector<vector<double>> &trajConfig,int r1,int r2);
 };

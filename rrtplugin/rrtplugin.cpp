@@ -34,25 +34,6 @@ public:
     {
 
         cout << "Plugin Interface Working"<<endl;
-        /*
-        vector<double> sample;
-        sample.assign(7,0.2);
-        RRTNode Node(sample,1,1);
-        Node.setParentID(2);
-        Node.setSelfID(4);
-
-        cout<<Node.getParentID()<<endl;
-        cout<<Node.getSelfID()<<endl;
-        cout<<Node.getJoint(2)<<endl;
-
-        NodeTree N;
-        N.addNode(sample,1,1);
-        sample.assign(7,0.5);
-        N.addNode(sample,2,1);
-        sample.assign(7,0.9);
-        N.addNode(sample,3,2);
-        N.printNodetree();
-        */
         return true;
     }
     bool StartRRT(std::ostream& sout, std::istream& sinput)
@@ -85,31 +66,6 @@ public:
         }
 
         RRT R(startConfig,goalConfig,env);
-
-
-/*
-        vector<double> sample;
-        sample.assign(7,0.2);
-
-        NodeTree N;
-        sample.assign(7,0.1);
-        N.addNode(sample,1,1);
-        sample.assign(7,0.2);
-        N.addNode(sample,2,1);
-        sample.assign(7,0.3);
-        N.addNode(sample,3,2);
-        sample.assign(7,0.4);
-        N.addNode(sample,4,3);
-        sample.assign(7,0.5);
-        N.addNode(sample,5,4);
-        N.printNodetree();
-
-
-        sample.assign(7,2.0);
-        cout<<N.nearestNeighbor(sample).first<<endl;
-        cout<<N.getNodeSize()<<endl;
-
-*/
         NodeTree N;
         R.buildRRT(N);
         return true;
