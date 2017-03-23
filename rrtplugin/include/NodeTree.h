@@ -14,10 +14,10 @@ public:
     NodeTree()
     {
         vecNodes={}; // do i need this?
-        cout<<"object created"<<endl;
+        //cout<<"object created"<<endl;
     }
 
-    void addNode(std::vector<double>& _config,long _self_id,long _parent_id)
+    void addNode(const std::vector<double>& _config,long _self_id,long _parent_id)
     {
 
         vecNodes.push_back(new RRTNode(_config,_self_id,_parent_id));
@@ -34,6 +34,10 @@ public:
 
             cout<<vecNodes.at(i)->self_id<<"    ";
             cout<<vecNodes.at(i)->parent_id<<endl;
+            cout<<"Config :";
+            for (size_t j=0; j< vecNodes[i]->config.size(); j++)
+                cout<<" "<<vecNodes[i]->config[j];
+            cout<<std::endl;
         }
     }
     int getNodeSize()
@@ -41,23 +45,21 @@ public:
         return vecNodes.size();
     }
 
-    pair<long,vector<double>> nearestNeighbor(std::vector<double> _config)
+    void nearestNeighbor(const vector<double> _config, std::vector<double> &returnConfig, long &returnID)
     {
-                              std::vector<double> nearconfig;
-                              long ID=0;
-                              double dist=0;
-                              double closest=std::numeric_limits<double>::max(); // max value of double
-                              for (ulong i = 0; i < vecNodes.size(); ++i) {
-        dist=vecNodes.at(i)->calcDistance(_config);
-        if(dist<closest)
-        {
-            closest=dist;
-            nearconfig=vecNodes.at(i)->config;
-            ID=vecNodes.at(i)->self_id;
+        double dist=0;
+        double closest=std::numeric_limits<float>::max(); // max value of float
+        for (size_t i = 0; i < vecNodes.size(); ++i) {
+            dist=vecNodes.at(i)->calcDistance(_config);
+            if(dist<closest)
+            {
+                closest=dist;
+                returnConfig=vecNodes.at(i)->config;
+                returnID=vecNodes.at(i)->self_id;
+            }
         }
-    }
 
-    return make_pair(ID,nearconfig);
-}
+        return;
+    }
 
 };

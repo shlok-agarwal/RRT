@@ -45,6 +45,10 @@ NodeTree.h
 -
 openrave/openrave.h
 -
+openrave/planningutils.h
+-
+chrono
+-
 
 /home/shlok/RRT/rrtplugin/include/RRTNode.h
 iostream
@@ -219,6 +223,10 @@ openrave/environment.h
 /usr/local/include/openrave-0.9/openrave/physicsengine.h
 
 /usr/local/include/openrave-0.9/openrave/planner.h
+
+/usr/local/include/openrave-0.9/openrave/planningutils.h
+openrave/openrave.h
+-
 
 /usr/local/include/openrave-0.9/openrave/plugin.h
 openrave/openrave.h

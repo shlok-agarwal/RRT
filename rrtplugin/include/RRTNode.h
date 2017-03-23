@@ -20,7 +20,8 @@ public:
 
     RRTNode(configv _config, int _self_id, int _parent_id)
     {
-        config=_config;
+        config.clear();
+        config.insert(config.begin(),_config.begin(), _config.end());
         self_id=_self_id;
         parent_id=_parent_id;
         weights={3.17104, 2.75674, 2.2325,1.78948,1.42903,0.809013,0.593084};
@@ -59,9 +60,11 @@ public:
     {
         double dist=0;
         for (uint i = 0; i < config.size(); ++i) {
+            //dist+=weights.at(i)*fabs(config.at(i)-sample.at(i)); // manhattan distance with weights
             dist+=weights.at(i)*pow(config.at(i)-sample.at(i),2);
+            // dist+=pow(config.at(i)-sample.at(i),2);
         }
-        return sqrt(dist);
+        return dist;
     }
 
 };
