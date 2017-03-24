@@ -23,6 +23,8 @@ public:
                         "This is a test command");
         RegisterCommand("StartRRT",boost::bind(&RRTPlugin::StartRRT,this,_1,_2),
                         "This command runs the RRT algorithm");
+        RegisterCommand("StartBiRRT",boost::bind(&RRTPlugin::StartBiRRT,this,_1,_2),
+                        "This command runs the RRT algorithm");
         env = penv;
         env->GetRobots(n);
         robot=n.at(0); //selecting the first robot
@@ -48,27 +50,33 @@ public:
 
         std::vector<double> startConfig;
         std::vector<double> goalConfig;
+        float goalBias;
+
 
         double f;
         uint i=0;
         while( stm >> f )
         {
 
-            if(i<jindex.size())
+            if(i<7)
             {
                 startConfig.push_back(f) ;
             }
-            else
+            else if(i>=7 && i<14)
             {
                 goalConfig.push_back(f) ;
             }
+            else goalBias=f;
             ++i;
         }
 
-        RRT R(startConfig,goalConfig,env);
+        RRT R(startConfig,goalConfig,goalBias,env);
         NodeTree N;
         vector <vector<double>> trajConfigRaw,trajConfigSmooth;
 
+        cout<<"RRT-Connect"<<endl;
+        cout<<endl;
+        cout<<"Goal Bias    "<<goalBias<<endl;
         pair<vector <vector<double>>,vector <vector<double>>> path=R.buildRRT(N);
         trajConfigRaw=path.first;
         trajConfigSmooth=path.second;
@@ -100,6 +108,48 @@ public:
 
         return true;
 
+    }
+    bool StartBiRRT(std::ostream& sout, std::istream& sinput)
+    {
+        string filename;
+        getline(sinput,filename);
+
+        std::istringstream stm(filename) ;
+
+        std::vector<int> jindex;
+        jindex=robot->GetActiveDOFIndices();
+
+        std::vector<double> startConfig;
+        std::vector<double> goalConfig;
+        float goalBias=0.0;
+
+        double f;
+        uint i=0;
+        while( stm >> f )
+        {
+            if(i<jindex.size())
+            {
+                startConfig.push_back(f) ;
+            }
+            else
+            {
+                goalConfig.push_back(f) ;
+            }
+            ++i;
+        }
+
+        RRT BR(startConfig,goalConfig,goalBias,env);
+        NodeTree N1,N2;
+        auto start = get_time::now();
+        cout<<"BiDirectional RRT"<<endl;
+        BR.buildBiRRT(N1,N2);
+        auto end = get_time::now();
+        auto diff = end - start;
+        cout<<"Success!!    Time taken to find Goal:   "<<chrono::duration_cast<ns>(diff).count()<<" seconds"<<endl;
+        cout<<"Number of Nodes Sampled  "<<N1.vecNodes.size()+N2.vecNodes.size()<<endl;
+
+
+        return true;
     }
     /*
     bool RunRRT(std::ostream& sout, std::istream& sinput)

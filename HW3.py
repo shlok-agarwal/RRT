@@ -74,7 +74,7 @@ if __name__ == "__main__":
             config.append(float(path[k+6]))
             k=k+7
             robot.SetActiveDOFValues(config)
-            draw.append(env.plot3(points=robot.GetLinks()[49].GetTransform()[0:3,3],pointsize=0.01,colors=color,drawstyle=1))
+            draw.append(env.plot3(points=robot.GetLinks()[49].GetTransform()[0:3,3],pointsize=0.02,colors=color,drawstyle=1))
 
     def drawSmoothPath(path, color):
         sizeRawPath=int(path[0])
@@ -91,25 +91,19 @@ if __name__ == "__main__":
             config.append(float(path[k+6]))
             k=k+7
             robot.SetActiveDOFValues(config)
-            draw.append(env.plot3(points=robot.GetLinks()[49].GetTransform()[0:3,3],pointsize=0.01,colors=color,drawstyle=1))
+            draw.append(env.plot3(points=robot.GetLinks()[49].GetTransform()[0:3,3],pointsize=0.04,colors=color,drawstyle=1))
 
     with env:
         goalconfig = [0.449,-0.201,-0.151,-0.11,0,-0.11,0]
 
         ### YOUR CODE HERE ###
+        goal_bias=0.20
         RRTPlugin = RaveCreateModule(env,'RRTPlugin')
         RRTPlugin.SendCommand('Test')
-        #RRTPlugin.SendCommand('SetConfigDimension'+' '+str(len(goalconfig)))
-        #RRTPlugin.SendCommand('SetStartConfig'+' '+str(startconfig).translate(None, "[],"))
-        #RRTPlugin.SendCommand('SetGoalConfig'+' '+str(goalconfig).translate(None, "[],"))
-        path=RRTPlugin.SendCommand('StartRRT'+' '+str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],"))
+        path=RRTPlugin.SendCommand('StartRRT'+' '+str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],") + " " + str(goal_bias).translate(None, "[],"))
         drawRawPath(splitPath(path), [1, 0, 0])
         drawSmoothPath(splitPath(path),[0, 0, 1])
-
-        #print str([int(robot.GetJointFromDOFIndex(x).IsCircular(0)) for x in robot.GetActiveDOFIndices()]).translate(None, "[],")
-        #print robot.GetActiveDOFIndices()
-        #print str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],")
-
+        #RRTPlugin.SendCommand('StartBiRRT'+' '+str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],"))
 
 
 

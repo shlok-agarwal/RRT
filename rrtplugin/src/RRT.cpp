@@ -3,10 +3,11 @@
 #include<RRT.h>
 
 using namespace std;
-RRT::RRT(vector<double> _startConfig, vector<double> _goalConfig, EnvironmentBasePtr _env)
+RRT::RRT(vector<double> _startConfig, vector<double> _goalConfig, float _goalBias, EnvironmentBasePtr _env)
 {
     startConfig=_startConfig;
     goalConfig=_goalConfig;
+    goalBias=_goalBias;
     env=_env;
 
     // Get robot from environment
@@ -33,13 +34,13 @@ RRT::RRT(vector<double> _startConfig, vector<double> _goalConfig, EnvironmentBas
         }
     }
 }
-void RRT::sampleRandomConfig(vector<double> &config, float goalbias)
+void RRT::sampleRandomConfig(vector<double> &config, float goalBias)
 {
     random=std::uniform_real_distribution<double>(0.0,1.0);
     std::mt19937_64 init_generator(rand_dev());
 
     // Accounting for goal bias
-    if(random(init_generator)<goalbias)
+    if(random(init_generator)<goalBias)
     {
         if(random(init_generator)<0.5)
         {
@@ -50,12 +51,9 @@ void RRT::sampleRandomConfig(vector<double> &config, float goalbias)
                 config.push_back(random(init_generator));
 
             }
-          //  cout<<"-* * * *-CLOSE GOAL POSITION TAKEN -*  * *  * *- "<<endl;
         }
         else
         {config=goalConfig;
-
-         //   cout<<"- - - - - - - -GOAL POSITION TAKEN - - - - - - - "<<endl;
         }
         return ;
     }
@@ -75,7 +73,7 @@ bool RRT::isCollision(const vector<dReal> &config)  // change this function. use
 
     robot->SetActiveDOFValues(config);
     return (robot->CheckSelfCollision() || env->CheckCollision(RobotBaseConstPtr(robot)));
-    }
+}
 pair<vector<vector<double>>,vector<vector<double>>> RRT::buildRRT(NodeTree &NTree)
 {
                                                   // Maximum number of iterations. This could also be a parameter of time
@@ -90,8 +88,8 @@ pair<vector<vector<double>>,vector<vector<double>>> RRT::buildRRT(NodeTree &NTre
                                                   auto start = get_time::now();
                                                   for (long i = 0; i < maxiterations; ++i) {
     config.clear();
-    sampleRandomConfig(config);
-    state=extend(NTree,config);
+    sampleRandomConfig(config,goalBias);
+    state=extendRRT(NTree,config);
     if(state)
     {
         break;
@@ -121,7 +119,8 @@ cout<<"No solution"<<endl;
 return make_pair(trajConfigRaw,trajConfigSmooth);
 
 }
-short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand should receive an address?? wait to see if other things work well
+// mode - true RRT, mode -false BiRRT
+short RRT::extendRRT(NodeTree &NTree, const vector<double> &configRand, bool mode) // configRand should receive an address?? wait to see if other things work well
 {
 
     //cout<<"Rand config  "<<configRand.at(0)<<"\t"<<configRand.at(1)<<"\t"<<configRand.at(2)<<"\t"<<configRand.at(3)<<"\t"<<configRand.at(4)<<"\t"<<configRand.at(5)<<"\t"<<configRand.at(6)<<endl;
@@ -186,8 +185,11 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
                 }
                 if(goalReached)
                 {
-                    cout<<endl<<"Goal Reached"<<endl;
-                    return 1;
+                    if(mode)
+                    {
+                        cout<<endl<<"Goal Reached"<<endl;
+                        return 1;
+                    }
                 }
             }
             //      cout<<"     local goal reached"<<endl;
@@ -221,8 +223,11 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
         }
         if(goalReached)
         {
-            cout<<endl<<"Goal Reached"<<endl;
-            return 1;
+            if(mode)
+            {
+                cout<<endl<<"Goal Reached"<<endl;
+                return 1;
+            }
 
         }
         else if(k!=goalConfig.size())
@@ -249,6 +254,7 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
     return 0;
 
 }
+//pair<int,vector<double>>
 void RRT::executeTraj(vector<vector<double>> &trajConfig)
 {
     TrajectoryBasePtr traj = RaveCreateTrajectory(env,"");
@@ -262,7 +268,7 @@ void RRT::executeTraj(vector<vector<double>> &trajConfig)
     cout<<"Trajectory Succesfully Executed !!! \n";
 }
 
-void RRT::findPath(NodeTree &NTree,vector<vector<double>> &trajConfig)
+void RRT::findPath(NodeTree &NTree,vector<vector<double>> &trajConfig,bool reverseTree)
 {
     long ID=0;
     // push the goal id first
@@ -286,7 +292,7 @@ void RRT::findPath(NodeTree &NTree,vector<vector<double>> &trajConfig)
             }
         }
     }
-    reverse(trajConfig.begin(),trajConfig.end());
+    if(reverseTree)    reverse(trajConfig.begin(),trajConfig.end());
 }
 
 void RRT::smoothPath(vector<vector<double>> &trajConfig)
@@ -296,6 +302,7 @@ void RRT::smoothPath(vector<vector<double>> &trajConfig)
     int r1,r2;
 
     for (int i = 0; i < 200; ++i) {
+
         r1=int(random(init_generator))%trajConfig.size();
         r2=int(random(init_generator))%trajConfig.size();
         if(r1!=r2 && abs(r1-r2)>1)
@@ -315,6 +322,7 @@ void RRT::smoothPath(vector<vector<double>> &trajConfig)
                 {
 
                     trajConfig.erase(trajConfig.begin()+r2+1,trajConfig.begin()+r1);
+
 
                 }
             }
@@ -397,5 +405,47 @@ bool RRT::connectPath(vector<vector<double>> &trajConfig,int r1,int r2)
 
 
     }
+
+}
+
+void RRT::buildBiRRT(NodeTree &NTree1,NodeTree &NTree2)
+{
+
+    vector<double> config,configBR;
+    NTree1.addNode(startConfig,1,0);
+    NTree2.addNode(goalConfig,1,0);
+    int state=0;
+    int j=0;
+
+    while(1) // give some condition
+    {
+        config.clear();
+        sampleRandomConfig(config,0);
+        if(j%2)
+        {
+            state=extendRRT(NTree1,config,false);
+            state=extendRRT(NTree2,NTree1.vecNodes.at(NTree1.getNodeSize()-1)->config,false);
+        }
+        else
+        {
+            state=extendRRT(NTree2,config,false);
+            state=extendRRT(NTree1,NTree2.vecNodes.at(NTree2.getNodeSize()-1)->config,false);
+        }
+        if(NTree2.vecNodes.at(NTree2.getNodeSize()-1)->config==NTree1.vecNodes.at(NTree1.getNodeSize()-1)->config)
+        {
+            cout<<endl;
+            cout<<" Path found   "<<endl;
+            break;
+        }
+        j++;
+    }
+    vector<vector<double>> trajTree1,trajTree2;
+    findPath(NTree1,trajTree1);
+    findPath(NTree2,trajTree2,false);
+    for (size_t i = 0; i < trajTree2.size(); ++i) {
+        trajTree1.push_back(trajTree2.at(i));
+    }
+    cout<<"Length of trajectory path    "<<trajTree1.size()<<endl;
+    executeTraj(trajTree1);
 
 }
