@@ -128,16 +128,16 @@
          </MakeCommands>
       </Target>
       </Build>
-      <Unit filename="/home/shlok/RRT/rrtplugin/NodeTree.cpp">
+      <Unit filename="/home/shlok/RRT/rrtplugin/src/NodeTree.cpp">
          <Option target="rrtplugin"/>
       </Unit>
-      <Unit filename="/home/shlok/RRT/rrtplugin/RRT.cpp">
+      <Unit filename="/home/shlok/RRT/rrtplugin/src/RRT.cpp">
          <Option target="rrtplugin"/>
       </Unit>
-      <Unit filename="/home/shlok/RRT/rrtplugin/RRTNode.cpp">
+      <Unit filename="/home/shlok/RRT/rrtplugin/src/RRTNode.cpp">
          <Option target="rrtplugin"/>
       </Unit>
-      <Unit filename="/home/shlok/RRT/rrtplugin/rrtplugin.cpp">
+      <Unit filename="/home/shlok/RRT/rrtplugin/src/rrtplugin.cpp">
          <Option target="rrtplugin"/>
       </Unit>
       <Unit filename="/home/shlok/RRT/rrtplugin/CMakeLists.txt">

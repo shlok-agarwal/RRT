@@ -3,6 +3,79 @@
 #include<RRT.h>
 
 using namespace std;
+RRT::RRT(vector<double> _startConfig, vector<double> _goalConfig, EnvironmentBasePtr _env)
+{
+    startConfig=_startConfig;
+    goalConfig=_goalConfig;
+    env=_env;
+
+    // Get robot from environment
+    env->GetRobots(n);
+    robot=n.at(0); //selecting the first robot
+
+    // Unqiue Joint ID for each joint
+    jindex=robot->GetActiveDOFIndices();
+    for (size_t i = 0; i < jindex.size(); ++i) {
+        if(robot->GetJointFromDOFIndex(jindex.at(i))->IsCircular(0))
+        {
+            jcircular.push_back(1);
+        }
+        else jcircular.push_back(0);
+    }
+
+    // Calculating joint limits for non-circular joints
+    robot->GetDOFLimits(qmin, qmax, jindex);
+
+    for (uint i = 0; i < jindex.size(); ++i) {
+        if(jcircular.at(i)==1)
+        {
+            qmin.at(i)=-0.1; qmax.at(i)=0.1;
+        }
+    }
+}
+void RRT::sampleRandomConfig(vector<double> &config, float goalbias)
+{
+    random=std::uniform_real_distribution<double>(0.0,1.0);
+    std::mt19937_64 init_generator(rand_dev());
+
+    // Accounting for goal bias
+    if(random(init_generator)<goalbias)
+    {
+        if(random(init_generator)<0.5)
+        {
+            for (size_t i = 0; i < jindex.size(); ++i) {
+                // First joint
+                random=std::uniform_real_distribution<double>(goalConfig.at(i)-0.1,goalConfig.at(i));
+                std::mt19937_64 init_generator(rand_dev());
+                config.push_back(random(init_generator));
+
+            }
+          //  cout<<"-* * * *-CLOSE GOAL POSITION TAKEN -*  * *  * *- "<<endl;
+        }
+        else
+        {config=goalConfig;
+
+         //   cout<<"- - - - - - - -GOAL POSITION TAKEN - - - - - - - "<<endl;
+        }
+        return ;
+    }
+    // Generating sample within joint limits
+    for (size_t i = 0; i < jindex.size(); ++i) {
+        // First joint
+        random=std::uniform_real_distribution<double>(qmin.at(i),qmax.at(i));
+        std::mt19937_64 init_generator(rand_dev());
+        config.push_back(random(init_generator));
+    }
+    // cout<<"Random Sample Gen"<<endl;
+    return ;
+}
+bool RRT::isCollision(const vector<dReal> &config)  // change this function. use collision checker online example :: IMPORTANT
+{
+    OpenRAVE::EnvironmentMutex::scoped_lock lock(env->GetMutex());
+
+    robot->SetActiveDOFValues(config);
+    return (robot->CheckSelfCollision() || env->CheckCollision(RobotBaseConstPtr(robot)));
+    }
 pair<vector<vector<double>>,vector<vector<double>>> RRT::buildRRT(NodeTree &NTree)
 {
                                                   // Maximum number of iterations. This could also be a parameter of time
@@ -188,6 +261,7 @@ void RRT::executeTraj(vector<vector<double>> &trajConfig)
     robot->GetController()->SetPath(traj);
     cout<<"Trajectory Succesfully Executed !!! \n";
 }
+
 void RRT::findPath(NodeTree &NTree,vector<vector<double>> &trajConfig)
 {
     long ID=0;
@@ -214,6 +288,7 @@ void RRT::findPath(NodeTree &NTree,vector<vector<double>> &trajConfig)
     }
     reverse(trajConfig.begin(),trajConfig.end());
 }
+
 void RRT::smoothPath(vector<vector<double>> &trajConfig)
 {
     random=std::uniform_real_distribution<double>(0.0,trajConfig.size());
@@ -250,6 +325,7 @@ void RRT::smoothPath(vector<vector<double>> &trajConfig)
 
 
 }
+
 bool RRT::connectPath(vector<vector<double>> &trajConfig,int r1,int r2)
 {
 

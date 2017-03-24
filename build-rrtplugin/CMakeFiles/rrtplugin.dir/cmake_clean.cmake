@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/rrtplugin.dir/rrtplugin.cpp.o"
-  "CMakeFiles/rrtplugin.dir/RRTNode.cpp.o"
-  "CMakeFiles/rrtplugin.dir/NodeTree.cpp.o"
-  "CMakeFiles/rrtplugin.dir/RRT.cpp.o"
+  "CMakeFiles/rrtplugin.dir/src/rrtplugin.cpp.o"
+  "CMakeFiles/rrtplugin.dir/src/RRTNode.cpp.o"
+  "CMakeFiles/rrtplugin.dir/src/NodeTree.cpp.o"
+  "CMakeFiles/rrtplugin.dir/src/RRT.cpp.o"
   "librrtplugin.pdb"
   "librrtplugin.so"
 )

@@ -6,26 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/shlok/RRT/rrtplugin/NodeTree.cpp
-iostream
--
-NodeTree.h
--
-
-/home/shlok/RRT/rrtplugin/RRT.cpp
-iostream
--
-NodeTree.h
--
-RRT.h
--
-
-/home/shlok/RRT/rrtplugin/RRTNode.cpp
-iostream
--
-RRTNode.h
--
-
 /home/shlok/RRT/rrtplugin/include/NodeTree.h
 iostream
 -
@@ -58,7 +38,27 @@ vector
 math.h
 -
 
-/home/shlok/RRT/rrtplugin/rrtplugin.cpp
+/home/shlok/RRT/rrtplugin/src/NodeTree.cpp
+iostream
+-
+NodeTree.h
+-
+
+/home/shlok/RRT/rrtplugin/src/RRT.cpp
+iostream
+-
+NodeTree.h
+-
+RRT.h
+-
+
+/home/shlok/RRT/rrtplugin/src/RRTNode.cpp
+iostream
+-
+RRTNode.h
+-
+
+/home/shlok/RRT/rrtplugin/src/rrtplugin.cpp
 openrave/plugin.h
 -
 boost/bind.hpp

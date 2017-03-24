@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     ### INITIALIZE YOUR PLUGIN HERE ###
     RaveInitialize()
-    RaveLoadPlugin('/home/shlok/RRT/build-rrtplugin/librrtplugin.so')
+    RaveLoadPlugin('build-rrtplugin/librrtplugin.so')
     ### END INITIALIZING YOUR PLUGIN ###
 
 
@@ -105,7 +105,7 @@ if __name__ == "__main__":
         path=RRTPlugin.SendCommand('StartRRT'+' '+str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],"))
         drawRawPath(splitPath(path), [1, 0, 0])
         drawSmoothPath(splitPath(path),[0, 0, 1])
-        
+
         #print str([int(robot.GetJointFromDOFIndex(x).IsCircular(0)) for x in robot.GetActiveDOFIndices()]).translate(None, "[],")
         #print robot.GetActiveDOFIndices()
         #print str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],")
