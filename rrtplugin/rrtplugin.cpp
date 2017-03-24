@@ -67,7 +67,37 @@ public:
 
         RRT R(startConfig,goalConfig,env);
         NodeTree N;
-        R.buildRRT(N);
+        vector <vector<double>> trajConfigRaw,trajConfigSmooth;
+
+        pair<vector <vector<double>>,vector <vector<double>>> path=R.buildRRT(N);
+        trajConfigRaw=path.first;
+        trajConfigSmooth=path.second;
+
+        // To plot the trajectory points, the trajectories are sent to the python file
+        // Sending size in advance to know where to split
+        sout<<trajConfigRaw.size();
+        sout<<",";
+        sout<<trajConfigSmooth.size();
+
+        for (size_t i = 0; i < trajConfigRaw.size(); ++i) {
+            for (size_t j = 0; j < startConfig.size(); ++j) {
+                sout<<",";
+                sout<<trajConfigRaw.at(i)[j];
+
+            }
+
+        }
+        for (size_t i = 0; i < trajConfigSmooth.size(); ++i) {
+            for (size_t j = 0; j < startConfig.size(); ++j) {
+                sout<<",";
+                sout<<trajConfigSmooth.at(i)[j];
+
+            }
+
+        }
+
+
+
         return true;
 
     }

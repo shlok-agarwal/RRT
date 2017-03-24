@@ -54,6 +54,44 @@ if __name__ == "__main__":
     robot.SetActiveDOFValues(startconfig);
     robot.GetController().SetDesired(robot.GetDOFValues());
     waitrobot(robot)
+    ### these two function are part of my code
+    draw=[]
+    def splitPath(path):
+        path = path.split(',')
+        return path
+
+    def drawRawPath(path, color):
+        sizeRawPath=int(path[0])
+        k=2
+        for i in range(sizeRawPath):
+            config=[]
+            config.append(float(path[k]))
+            config.append(float(path[k+1]))
+            config.append(float(path[k+2]))
+            config.append(float(path[k+3]))
+            config.append(float(path[k+4]))
+            config.append(float(path[k+5]))
+            config.append(float(path[k+6]))
+            k=k+7
+            robot.SetActiveDOFValues(config)
+            draw.append(env.plot3(points=robot.GetLinks()[49].GetTransform()[0:3,3],pointsize=0.01,colors=color,drawstyle=1))
+
+    def drawSmoothPath(path, color):
+        sizeRawPath=int(path[0])
+        sizeSmoothPath=int(path[1])
+        k=7*sizeRawPath+2
+        for i in range(sizeSmoothPath):
+            config=[]
+            config.append(float(path[k]))
+            config.append(float(path[k+1]))
+            config.append(float(path[k+2]))
+            config.append(float(path[k+3]))
+            config.append(float(path[k+4]))
+            config.append(float(path[k+5]))
+            config.append(float(path[k+6]))
+            k=k+7
+            robot.SetActiveDOFValues(config)
+            draw.append(env.plot3(points=robot.GetLinks()[49].GetTransform()[0:3,3],pointsize=0.01,colors=color,drawstyle=1))
 
     with env:
         goalconfig = [0.449,-0.201,-0.151,-0.11,0,-0.11,0]
@@ -64,8 +102,10 @@ if __name__ == "__main__":
         #RRTPlugin.SendCommand('SetConfigDimension'+' '+str(len(goalconfig)))
         #RRTPlugin.SendCommand('SetStartConfig'+' '+str(startconfig).translate(None, "[],"))
         #RRTPlugin.SendCommand('SetGoalConfig'+' '+str(goalconfig).translate(None, "[],"))
-        RRTPlugin.SendCommand('StartRRT'+' '+str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],"))
-
+        path=RRTPlugin.SendCommand('StartRRT'+' '+str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],"))
+        drawRawPath(splitPath(path), [1, 0, 0])
+        drawSmoothPath(splitPath(path),[0, 0, 1])
+        
         #print str([int(robot.GetJointFromDOFIndex(x).IsCircular(0)) for x in robot.GetActiveDOFIndices()]).translate(None, "[],")
         #print robot.GetActiveDOFIndices()
         #print str(startconfig).translate(None, "[],")+' '+str(goalconfig).translate(None, "[],")

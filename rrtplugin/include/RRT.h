@@ -136,7 +136,7 @@ public:
         }
          return true;*/
     }
-    bool buildRRT(NodeTree &NTree);
+    pair<vector<vector<double> >, vector<vector<double> > > buildRRT(NodeTree &NTree);
     short extend(NodeTree &NTree, const vector<double> configRand);
     void executeTraj(vector<vector<double>> &trajConfig);
     void findPath(NodeTree &NTree,vector<vector<double>> &trajConfig);

@@ -3,44 +3,50 @@
 #include<RRT.h>
 
 using namespace std;
-bool RRT::buildRRT(NodeTree &NTree)
+pair<vector<vector<double>>,vector<vector<double>>> RRT::buildRRT(NodeTree &NTree)
 {
-    // Maximum number of iterations. This could also be a parameter of time
-    long maxiterations=100000;
-    vector<double> config;
+                                                  // Maximum number of iterations. This could also be a parameter of time
+                                                  long maxiterations=100000;
+                                                  vector<double> config;
+                                                  vector <vector<double>> trajConfig,trajConfigRaw,trajConfigSmooth;
+                                                  trajConfigRaw={};
+                                                  trajConfigSmooth={};
 
-    NTree.addNode(startConfig,1,0);
-    short state=0;
-    auto start = get_time::now();
-    for (long i = 0; i < maxiterations; ++i) {
-        config.clear();
-        sampleRandomConfig(config);
-        state=extend(NTree,config);
-        if(state)
-        {
-            break;
-        }
-    }
+                                                  NTree.addNode(startConfig,1,0);
+                                                  short state=0;
+                                                  auto start = get_time::now();
+                                                  for (long i = 0; i < maxiterations; ++i) {
+    config.clear();
+    sampleRandomConfig(config);
+    state=extend(NTree,config);
     if(state)
     {
-        auto end = get_time::now();
-        auto diff = end - start;
-        cout<<"Success!!    Time taken to find Goal:   "<<chrono::duration_cast<ns>(diff).count()<<" seconds"<<endl;
-        cout<<"Number of Nodes explored:    "<<NTree.getNodeSize()<<endl;
-        vector <vector<double>> trajConfig;
-        findPath(NTree,trajConfig);
-        cout<<"Length of Path:  "<<trajConfig.size()<<endl;
-        start = get_time::now();
-        smoothPath(trajConfig);
-        end = get_time::now();
-        diff = end - start;
-        cout<<"Length of Path after Smoothening:    "<<trajConfig.size()<<endl;
-        cout<<"Time taken to smoothen the trajectory:   "<<chrono::duration_cast<ns>(diff).count()<<" seconds"<<endl;
-        executeTraj(trajConfig);
-        return true;
+        break;
     }
-    else
-        return false;
+}
+if(state)
+{
+    auto end = get_time::now();
+    auto diff = end - start;
+    cout<<"Success!!    Time taken to find Goal:   "<<chrono::duration_cast<ns>(diff).count()<<" seconds"<<endl;
+    cout<<"Number of Nodes explored:    "<<NTree.getNodeSize()<<endl;
+
+    findPath(NTree,trajConfig);
+    trajConfigRaw=trajConfig;
+    cout<<"Length of Path:  "<<trajConfigRaw.size()<<endl;
+    start = get_time::now();
+    smoothPath(trajConfig);
+    trajConfigSmooth=trajConfig;
+    end = get_time::now();
+    diff = end - start;
+    cout<<"Length of Path after Smoothening:    "<<trajConfigSmooth.size()<<endl;
+    cout<<"Time taken to smoothen the trajectory:   "<<chrono::duration_cast<ns>(diff).count()<<" seconds"<<endl;
+    executeTraj(trajConfig);
+    return make_pair(trajConfigRaw,trajConfigSmooth);
+}
+cout<<"No solution"<<endl;
+return make_pair(trajConfigRaw,trajConfigSmooth);
+
 }
 short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand should receive an address?? wait to see if other things work well
 {
@@ -72,6 +78,7 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
     double element;
     vector<double> configNew;
     bool goalReached = true;
+    size_t k=0;
 
     while (true)
     {
@@ -134,11 +141,20 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
         }
         //confignew
 
+        // to check limits
+        k=0;
+        for (size_t i = 0; i < configRand.size(); ++i) {
+            if(configNew[i]>qmin[i] && configNew[i]<qmax[i]) k++;
+        }
         if(goalReached)
         {
             cout<<endl<<"Goal Reached"<<endl;
             return 1;
 
+        }
+        else if(k!=goalConfig.size())
+        {
+            return 0;
         }
         else if(isCollision(configNew))
         {
@@ -162,10 +178,11 @@ short RRT::extend(NodeTree &NTree,const vector<double> configRand) // configRand
 }
 void RRT::executeTraj(vector<vector<double>> &trajConfig)
 {
-      TrajectoryBasePtr traj = RaveCreateTrajectory(env,"");
+    TrajectoryBasePtr traj = RaveCreateTrajectory(env,"");
     traj->Init(robot->GetActiveConfigurationSpecification());
     for (size_t i = 0; i < trajConfig.size(); ++i) {
-        traj->Insert(i,trajConfig.at(trajConfig.size()-1-i),true);
+        //traj->Insert(i,trajConfig.at(trajConfig.size()-1-i),true);
+        traj->Insert(i,trajConfig.at(i),true);
     }
     planningutils::RetimeActiveDOFTrajectory(traj,robot);
     robot->GetController()->SetPath(traj);
@@ -195,6 +212,7 @@ void RRT::findPath(NodeTree &NTree,vector<vector<double>> &trajConfig)
             }
         }
     }
+    reverse(trajConfig.begin(),trajConfig.end());
 }
 void RRT::smoothPath(vector<vector<double>> &trajConfig)
 {
@@ -205,7 +223,7 @@ void RRT::smoothPath(vector<vector<double>> &trajConfig)
     for (int i = 0; i < 200; ++i) {
         r1=int(random(init_generator))%trajConfig.size();
         r2=int(random(init_generator))%trajConfig.size();
-        if(r1!=r2)
+        if(r1!=r2 && abs(r1-r2)>1)
         {
             if(r1<r2)
             {
@@ -240,6 +258,7 @@ bool RRT::connectPath(vector<vector<double>> &trajConfig,int r1,int r2)
     float parameter=0.0;
     long tempstop=0;
     double element;
+    size_t k=0;
     vector<double> configNew;
     configStart=trajConfig.at(r1);
     configGoal=trajConfig.at(r2);
@@ -282,8 +301,15 @@ bool RRT::connectPath(vector<vector<double>> &trajConfig,int r1,int r2)
             element=roundf(element*100.0)/100.0;
         }
         //confignew
-
-        if(isCollision(configNew))
+        k=0;
+        for (size_t i = 0; i < configGoal.size(); ++i) {
+            if(configNew[i]>qmin[i] && configNew[i]<qmax[i]) k++;
+        }
+        if(k!=goalConfig.size())
+        {
+            return false;
+        }
+        else if(isCollision(configNew))
         {
             // cout<<"collision"<<endl;
             return false;
